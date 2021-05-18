@@ -1,0 +1,21 @@
+.app {
+    .MuiAppBar-colorPrimary {
+        // background-color: green;
+    }
+    .navs {
+        flex-grow: 1;
+        width: 300px;
+        a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    }
+    .authClass {
+        display: flex;
+        justify-content: flex-end;
+        width: 100px;
+        align-items: inherit;
+        flex-grow: 1;
+    }
+}
