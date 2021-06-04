@@ -7,11 +7,12 @@ import FileBase from 'react-file-base64';
 import { postEvent, updateEvent, setCurrentId } from '../../../actions/eventActions'
 
 import useStyles from './styles';
+import ImageInput from '../../../presentational/ImageInput';
 // import { createPost, updatePost } from '../../actions/posts';
 
 const Form = () => {
   // const [postData, setPostData] = useState({ creator: '', title: '', message: '', tags: '', selectedFile: '' });
-  const [eventData, setEvent] = useState({title: '', message: ''});
+  const [eventData, setEvent] = useState({title: '', message: '', selectedFile: ''});
   const {user, currentEvent} = useSelector((state) => {
     return {
       currentEvent: state.events.currentEvent,
@@ -42,7 +43,7 @@ const Form = () => {
   },[currentEvent]);
 
   const clear = () => {
-    setEvent({ title: '', message: ''});
+    setEvent({ title: '', message: '', selectedFile: ''});
     if(currentEvent) dispatch(setCurrentId(null));
   };
   const onChangedata = (e) => {
@@ -62,6 +63,7 @@ const Form = () => {
       dispatch(updateEvent(eventData));
       clear();
     } else {
+      debugger;
       dispatch(postEvent(eventData));
       clear();
     }
@@ -74,12 +76,32 @@ const Form = () => {
     // }
   };
 
+  // const uploadImage = (data) => {
+  //   const { base64, size } = data;
+  //   const imageSize = size.split(' ')[0];
+  //   if( imageSize < 990) {
+  //     setEvent({ ...eventData, selectedFile: base64 });
+  //   } else {
+  //     prompt('image Size is exceeded 990 kb',imageSize)
+  //   }
+  // }
+
+  const onChangeImage = (image) => {
+    console.log('image', image)
+    setEvent({ ...eventData, selectedFile: image });
+  }
+
   return (
     <Paper className={classes.paper}>
       <form autoComplete="off" noValidate className={`${classes.root} ${classes.form}`} onSubmit={handleSubmit}>
         <Typography variant="h6">{'Creating a Event'}</Typography>
         <TextField name="title" variant="outlined" label="Title" fullWidth value={eventData.title} onChange={onChangedata} />
         <TextField name="message" variant="outlined" label="Message" fullWidth value={eventData.message} onChange={onChangedata} />
+        <div className={classes.fileInput}>
+          {/* filebase component is used to store images inline in base64 blob
+        <FileBase type="file" multiple={false} onDone={uploadImage} />  */}
+        <ImageInput onChangeImage={onChangeImage} />
+        </div>
         <Button className={classes.buttonSubmit} variant="contained" color="primary" size="large" type="submit" fullWidth>Submit</Button>
         <Button variant="contained" color="secondary" size="small" onClick={clear} fullWidth>Clear</Button>
         <Prompt

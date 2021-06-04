@@ -3,7 +3,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import { makeStyles } from '@material-ui/core/styles';
 // import Grid from '@material-ui/core/Grid';
 import Routes from '../Routes';
-import Header from './Header/Header'
+import Header from './Header/Header';
+import SessionTimeout from '../components/sessionTimeOut/sessionTimeOut'
 
 const useStyles = makeStyles((theme) => ({
   rootcontainer: {
@@ -18,6 +19,7 @@ const App = () => {
     <div className="app">
       <CssBaseline />
       <Header />
+      <SessionTimeout />
       <div className={classes.rootcontainer}>
           <Routes />
       </div>

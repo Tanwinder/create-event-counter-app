@@ -4,8 +4,10 @@ const Events = require("../models/events");
 
 const getEvents = async (req, res) => {
     try {
-        const fetchEvents = await Events.find();
+        if(!req.userId) return res.status(401).send({message: 'unauthenticated user'});
+        let fetchEvents = await Events.find();
         console.log("PostEvents=----", fetchEvents);
+        
         setTimeout(() => {
             res.status(200).json(fetchEvents);
         }, 500)

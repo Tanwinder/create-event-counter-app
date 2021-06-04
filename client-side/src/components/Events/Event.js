@@ -5,6 +5,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
+// import { Avatar } from '../presentational/Blob'
 
 import { likeEvent, deleteEvent, setCurrentId } from '../../actions/eventActions';
 import useStyles from './styles';
@@ -15,7 +16,7 @@ const Event = ({ event }) => {
   const classes = useStyles();
 
   const onClickDelete= () => {
-    dispatch(deleteEvent(event._id))
+    dispatch(deleteEvent(event))
   }
 
   const onClickLike = () => {
@@ -28,7 +29,9 @@ const Event = ({ event }) => {
 
   return (
     <Card className={classes.card}>
-      <CardMedia className={classes.media} image={!!event.selectedFile || 'https://images.pexels.com/photos/1563356/pexels-photo-1563356.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260'} title={event.title} />
+      <CardMedia className={classes.media} image={event?.selectedFile && `http://localhost:5000/file/${event?.selectedFile}`} title={event.title} />
+      {/* <img src={event.selectedFile}></img> */}
+      {/* <Avatar src={event.selectedFile} alt="alt image---" /> */}
       <div className={classes.overlay}>
         <Typography variant="h6">{event.creator}</Typography>
         {/* <Typography variant="body2">{moment(event.createdAt).fromNow()}</Typography> */}

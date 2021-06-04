@@ -4,6 +4,7 @@ import PrivateRoute from './components/Auth/privateRoute'
 
 import EventsPage from './components/Events/EventsPage';
 import Auth from './components/Auth/Auth';
+import UploadImages from './components/UploadImages/UploadImages'
 
 const routesArr = () => ([
         {
@@ -34,6 +35,12 @@ const routesArr = () => ([
             privatePath: true
         },
         {
+            path: '/uploadimages',
+            component: UploadImages,
+            exact: false,
+            privatePath: true
+        },
+        {
             path: '*',
             component: () => <h1>Not Found</h1>,
             exact: false
@@ -51,6 +58,10 @@ export const navsArr = [
     {
         path: '/Employess',
         name: "Employees"
+    },
+    {
+        path: '/uploadimages',
+        name: "UploadImages"
     }
 ]
 export default () => {

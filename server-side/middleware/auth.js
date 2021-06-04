@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const secret = 'test';
+const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 
 
 const authMiddleware = async (req, res, next) => {
@@ -12,7 +12,7 @@ const authMiddleware = async (req, res, next) => {
         let decoded;
 
         if(token && isCustomSignIn) {
-            decoded = jwt.verify(token, secret);
+            decoded = jwt.verify(token, ACCESS_TOKEN_SECRET);
             req.userId = decoded.id;
             req.firstName = decoded.firstname;
             req.lastName = decoded.lastname;

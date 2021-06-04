@@ -8,6 +8,12 @@ import {GET_EVENTS_CALL, EVENTS_LOADER, GET_EVENTS, POST_EVENT,
 
 const user = state => state?.user;
 
+function* getAccessToken() {
+    const tokenState = yield select(user);
+    const token = tokenState?.userInfo?.accessToken;
+    return token;
+}
+
 function* setCurrentId({payload}) {
     try {
         yield put({type: SET_CURRENT_ID, payload});
@@ -20,8 +26,9 @@ function* callEventsSaga() {
 
    try {
     yield put({type: EVENTS_LOADER});
+    const token = getAccessToken();
 
-    let { data } = yield call(Api, "/api/events");
+    let { data } = yield call(Api, "/api/events", "", token);
 
     yield put({type: GET_EVENTS, payload: data});
 
@@ -33,16 +40,30 @@ function* callEventsSaga() {
 function* postEventSaga({value}) {
     
     try {
-        const tokenState = yield select(user);
-        const token = tokenState?.userInfo?.token;
         yield put({type: EVENTS_LOADER});
+        const token = getAccessToken();
+        const formData= new FormData();
+            formData.append("file", value?.selectedFile);
+            // formData.append("title",title);
+            // formData.append("message",message);
+            // console.log('formdata' , formData)
         const options = {
             method: 'post',
-            payload: value
+            payload: {
+                ...value,
+                selectedFile: value?.selectedFile?.name || ""
+            }
         }
-        const {data} = yield call(Api, '/api/events', options, token );
-
-        yield put({type: POST_EVENT, payload: data})
+        const imageUploadOptions = {
+            method: 'post',
+            payload: formData
+        }
+        const [imageItem, eventsRes] = yield all([
+            call(Api, '/file/upload', imageUploadOptions, token),
+            call(Api, '/api/events', options, token )
+          ])
+        debugger;
+        yield put({type: POST_EVENT, payload: eventsRes?.data})
     } catch(error) {
         console.log(error)
     }
@@ -51,8 +72,7 @@ function* postEventSaga({value}) {
 function* updateEvent({payload}) {
     try {
         yield put({type: EVENTS_LOADER});
-        const tokenState = yield select(user);
-        const token = tokenState?.userInfo?.token;
+        const token = getAccessToken();
         const options = {
             method: 'patch',
             payload
@@ -67,13 +87,15 @@ function* updateEvent({payload}) {
 function* deleteEvent({payload}) {
     try {
         yield put({type: EVENTS_LOADER});
+        const token = getAccessToken();
         const options = {
             method: 'delete',
             payload
         };
-        const tokenState = yield select(user);
-        const token = tokenState?.userInfo?.token;
-        const { data } = yield call(Api, `/api/events/${payload}`, options, token);
+        const [deletedItem,{data}] = yield all([
+            call(Api, `/file/${payload?.selectedFile}`, options, token),
+            call(Api, `/api/events/${payload?._id}`, options, token)
+        ]) ;
         yield put({type: DELETE_EVENT, payload: data});
     } catch (error) {
         console.log(error)
@@ -83,8 +105,7 @@ function* deleteEvent({payload}) {
 function* likeEvent({payload}) {
     try {
         yield put({type: EVENTS_LOADER});
-        const tokenState = yield select(user);
-        const token = tokenState?.userInfo?.token;
+        const token = getAccessToken();
         const options = {
             method: 'patch',
         }

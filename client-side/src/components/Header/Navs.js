@@ -12,7 +12,8 @@ export default function Navs() {
   const tabArr = {
     events: 0,
     counter: 1,
-    employees: 2
+    employees: 2,
+    uploadimages: 3
   }
   const [value, setValue] = React.useState(tabArr[tabval.toLowerCase()]);
 

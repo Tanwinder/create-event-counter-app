@@ -1,9 +1,35 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const Token = require('../models/tokenmodel');
 const Users= require("../models/user");
+const { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } = process.env;
 
-const secret = 'test';
+const generateAccessToken = (oldUser) => {
+  return jwt.sign({ 
+    email: oldUser.email, 
+    firstname: oldUser.firstName, 
+    lastname: oldUser.lastName, 
+    id: oldUser._id }, 
+    ACCESS_TOKEN_SECRET, 
+    { 
+      expiresIn: 30   //30 seconds
+    });
+}
+
+const generateRefreshToken = async (oldUser) => {
+  const refreshToken = jwt.sign({ 
+    email: oldUser.email, 
+    firstname: oldUser.firstName, 
+    lastname: oldUser.lastName, 
+    id: oldUser._id }, 
+    REFRESH_TOKEN_SECRET, 
+    { 
+      expiresIn: 60 * 10 // 10 mins
+    });
+  await new Token({ token: refreshToken }).save();
+  return refreshToken;
+}
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
@@ -19,9 +45,10 @@ const signin = async (req, res) => {
 
     if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign( { email: oldUser.email, firstname: oldUser.firstName, lastname: oldUser.lastName, id: oldUser._id }, secret, { expiresIn: 60 * 30 } );
+    const accessToken = generateAccessToken(oldUser);
+    const refreshToken = await generateRefreshToken(oldUser);
 
-    res.status(200).send({ result: oldUser, token });
+    res.status(200).send({ result: oldUser, accessToken, refreshToken });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong", error: err });
   }
@@ -39,9 +66,10 @@ const signup = async (req, res) => {
 
     const result = await Users.create({ email, password: hashedPassword, firstName: firstName, lastName: lastName });
 
-    const token = jwt.sign( { email: result.email, firstname: result.firstName, lastname: result.lastName, id: result._id }, secret, { expiresIn: 60 * 30 } );
+    const accessToken = generateAccessToken(result);
+    const refreshToken = await generateRefreshToken(result);
 
-    res.status(201).send({ result, token });
+    res.status(201).send({ result, accessToken, refreshToken });
   } catch (error) {
     res.status(500).json({ message: "Something went wrong", error: error });
     
@@ -49,4 +77,45 @@ const signup = async (req, res) => {
   }
 };
 
-module.exports = {signin, signup};
+const refreshtoken = async (req, res) => {
+  try {
+    //get refreshToken
+    const { refreshToken } = req.body;
+    //send error if no refreshToken is sent
+    if (!refreshToken) {
+      return res.status(403).json({ error: "Access denied,token missing!" });
+    } else {
+      //query for the token to check if it is valid:
+      const tokenDoc = await Token.findOne({ token: refreshToken });
+      //send error if no token found:
+      if (!tokenDoc) {
+        return res.status(401).json({ error: "Token expired!" });
+      } else {
+        //extract payload from refresh token and generate a new access token and send it
+        const payload = jwt.verify(tokenDoc.token, REFRESH_TOKEN_SECRET);
+        // const accessToken = jwt.sign({ user: payload }, ACCESS_TOKEN_SECRET, {
+        //   expiresIn: "10m",
+        // });
+        const accessToken = generateAccessToken(payload);
+        return res.status(200).json({ accessToken });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error!" });
+  }
+}
+
+const logout = async (req, res) => {
+  try {
+    //delete the refresh token saved in database:
+    const { refreshToken } = req.body;
+    await Token.findOneAndDelete({ token: refreshToken });
+    return res.status(200).json({ success: "User logged out!" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error!" });
+  }
+}
+
+module.exports = {signin, signup, refreshtoken, logout};
