@@ -1,0 +1,12 @@
+.serviceError {
+    display: flex;
+    padding: 10px;
+    box-shadow: 2px 0px 8px grey;
+    margin: 10px auto;
+    background: #f44336;
+    color: white;
+    justify-content: space-between;
+    font-size: 16px;
+    max-width: 95%;
+    border-radius: 4px;
+}

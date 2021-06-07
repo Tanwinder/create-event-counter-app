@@ -3,7 +3,7 @@ import {Api} from '../utils/api';
 import {GET_EVENTS_CALL, EVENTS_LOADER, GET_EVENTS, POST_EVENT, 
     POST_EVENT_ACTION, SET_CURRENT_ID, TAKE_CURRENT_ID, 
     CALL_UPDATE_EVENT, UPDATE_EVENT, DELETE_EVENT, CALL_DELETE_EVENT,
-    CALL_LIKE_EVENT} from '../actions/actionTypes'
+    CALL_LIKE_EVENT, SERVICE_ERROR} from '../actions/actionTypes'
 // const {GET_EVENTS_CALL, EVENTS_LOADER, GET_EVENTS, POST_EVENT, POST_EVENT_ACTION, SET_CURRENT_ID, TAKE_CURRENT_ID} = obj;
 
 const user = state => state?.user;
@@ -18,6 +18,7 @@ function* setCurrentId({payload}) {
     try {
         yield put({type: SET_CURRENT_ID, payload});
     } catch (error) {
+        yield put({type: SERVICE_ERROR, payload: error});
         console.log(error)
     }
 }
@@ -33,6 +34,7 @@ function* callEventsSaga() {
     yield put({type: GET_EVENTS, payload: data});
 
    } catch (error) {
+        yield put({type: SERVICE_ERROR, payload: error});
        console.log(error)
    }
 }
@@ -62,9 +64,9 @@ function* postEventSaga({value}) {
             call(Api, '/file/upload', imageUploadOptions, token),
             call(Api, '/api/events', options, token )
           ])
-        debugger;
         yield put({type: POST_EVENT, payload: eventsRes?.data})
     } catch(error) {
+        yield put({type: SERVICE_ERROR, payload: error});
         console.log(error)
     }
 }
@@ -80,6 +82,7 @@ function* updateEvent({payload}) {
         const { data } = yield call(Api, `/api/events/${payload._id}`, options, token);
         yield put({type: UPDATE_EVENT, payload: data});
     } catch (error) {
+        yield put({type: SERVICE_ERROR, payload: error});
         console.log(error)
     }
 }
@@ -98,6 +101,7 @@ function* deleteEvent({payload}) {
         ]) ;
         yield put({type: DELETE_EVENT, payload: data});
     } catch (error) {
+        yield put({type: SERVICE_ERROR, payload: error});
         console.log(error)
     }
 }
@@ -112,6 +116,7 @@ function* likeEvent({payload}) {
         const {data} = yield call(Api, `/api/events/likeevent/${payload}`, options, token);
         yield put({type: UPDATE_EVENT, payload: data});
     } catch (error) {
+        yield put({type: SERVICE_ERROR, payload: error});
         console.log(error)
     }
 }

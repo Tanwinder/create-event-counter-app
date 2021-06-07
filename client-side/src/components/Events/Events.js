@@ -23,7 +23,7 @@ const Events = () => {
   useEffect(() => {
     if(!currentEvent) dispatch(getEvents());
   }, [dispatch])
-
+  console.log('Events is rendered 1');
   return (
     eventLoader ? <CircularProgress /> : (
       <Grid className={classes.container} container alignItems="stretch" spacing={3}>

@@ -1,6 +1,6 @@
 import { takeLatest, call, put, all } from 'redux-saga/effects'
 import {Api} from '../utils/api';
-import {LOG_OUT_USER, LOG_OUT, CALL_AUTH, CALL_SIGNUP} from '../actions/actionTypes';
+import {LOG_OUT_USER, LOG_OUT, CALL_AUTH, CALL_SIGNUP, SERVICE_ERROR} from '../actions/actionTypes';
 // const {LOG_OUT_USER, LOG_OUT, CALL_AUTH} = obj;
 
 function* callLoginSaga({formData, history, alreadyLoggedIn}) {
@@ -19,6 +19,7 @@ function* callLoginSaga({formData, history, alreadyLoggedIn}) {
             history.push(from?.pathname, { from: history?.location });
         }
     } catch (error) {
+        yield put({type: SERVICE_ERROR, payload: error});
         console.log('error', error)
     }
 }
@@ -39,6 +40,7 @@ function* callSignUpSaga({formData, history, alreadyLoggedIn}) {
             history.push(from?.pathname, { from: history?.location });
         }
     } catch (error) {
+        yield put({type: SERVICE_ERROR, payload: error});
         console.log('error', error)
     }
 }

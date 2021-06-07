@@ -26,7 +26,7 @@ const Event = ({ event }) => {
   const onClickUpdate = () => {
     dispatch(setCurrentId(event));
   }
-
+  console.log('Event inner is rendered 1');
   return (
     <Card className={classes.card}>
       <CardMedia className={classes.media} image={event?.selectedFile && `http://localhost:5000/file/${event?.selectedFile}`} title={event.title} />

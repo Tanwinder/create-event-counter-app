@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function EventsPage() {
   const classes = useStyles();
+  console.log('event page is rendered 1');
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>

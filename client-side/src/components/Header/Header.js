@@ -76,7 +76,7 @@ export default function MenuAppBar() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  console.log('Header is rendered 2');
   return (
     <div className={classes.root}>
       <AppBar position="static">

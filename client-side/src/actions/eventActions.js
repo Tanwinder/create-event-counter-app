@@ -4,8 +4,6 @@ import { GET_EVENTS_CALL, EVENTS_LOADER, POST_EVENT_ACTION,
 
 export const getEvents = () => ({type: GET_EVENTS_CALL});
 
-const Api = {}
-
 export const postEvent = (value) => ({type: POST_EVENT_ACTION, value});
 
 export const deleteEvent = (id) => ({type: CALL_DELETE_EVENT, payload: id});

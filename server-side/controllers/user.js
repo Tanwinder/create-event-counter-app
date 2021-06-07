@@ -13,7 +13,7 @@ const generateAccessToken = (oldUser) => {
     id: oldUser._id }, 
     ACCESS_TOKEN_SECRET, 
     { 
-      expiresIn: 30   //30 seconds
+      expiresIn: 60 * 2   //1min
     });
 }
 

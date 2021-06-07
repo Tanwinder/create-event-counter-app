@@ -29,6 +29,7 @@ const UploadImages = () => {
         console.log(newImage,'file-----')
         setImage(newImage)
     }
+    console.log('Upload images is rendered 1');
     return(
         <div>
             <form onSubmit={submitImage}>

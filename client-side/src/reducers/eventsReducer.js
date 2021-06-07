@@ -1,10 +1,13 @@
-import {GET_EVENTS, EVENTS_LOADER, POST_EVENT, DELETE_EVENT, UPDATE_EVENT, SET_CURRENT_ID} from '../actions/actionTypes';
+import {GET_EVENTS, EVENTS_LOADER, POST_EVENT, 
+    DELETE_EVENT, UPDATE_EVENT, SET_CURRENT_ID,
+    SERVICE_ERROR} from '../actions/actionTypes';
 // const {GET_EVENTS, EVENTS_LOADER, POST_EVENT, DELETE_EVENT, UPDATE_EVENT, SET_CURRENT_ID} = obj;
 
 const initial_state = {
     allEvents: [],
     currentEvent: null,
-    eventLoader: false
+    eventLoader: false,
+    serviceError: null
 }
 export default (state= initial_state, action) => {
     switch(action.type) {
@@ -12,7 +15,8 @@ export default (state= initial_state, action) => {
             return {
                 ...state,
                 allEvents: action.payload,
-                eventLoader: false
+                eventLoader: false,
+                serviceError: null
             };
         case EVENTS_LOADER:
             return {
@@ -24,25 +28,34 @@ export default (state= initial_state, action) => {
                 ...state,
                 allEvents: [...state.allEvents, action.payload],
                 eventLoader: false,
-                currentEvent: null
+                currentEvent: null,
+                serviceError: null
             }  
         case DELETE_EVENT:
             return {
                 ...state,
                 allEvents: state.allEvents && state.allEvents.filter(e => {return (e._id !== action.payload._id)}),
-                eventLoader: false
+                eventLoader: false,
+                serviceError: null
             } ;
         case UPDATE_EVENT:
             return {
                 ...state,
                 allEvents: state.allEvents && state.allEvents.map(ev => (ev._id === action.payload._id) ? action.payload : ev),
                 eventLoader: false,
-                currentEvent: null
+                currentEvent: null,
+                serviceError: null
             };
         case SET_CURRENT_ID:
             return {
                 ...state,
                 currentEvent: action.payload
+            };
+        case SERVICE_ERROR:
+            return {
+                ...state,
+                serviceError: action.payload,
+                eventLoader: false,
             };
         default:
             return state;

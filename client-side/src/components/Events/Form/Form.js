@@ -63,7 +63,6 @@ const Form = () => {
       dispatch(updateEvent(eventData));
       clear();
     } else {
-      debugger;
       dispatch(postEvent(eventData));
       clear();
     }
